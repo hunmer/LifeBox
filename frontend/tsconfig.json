@@ -27,7 +27,9 @@
       "@/components/*": ["./src/components/*"],
       "@/lib/*": ["./src/lib/*"],
       "@/assets/*": ["./src/assets/*"],
-      "@/plugins/*": ["./src/plugins/*"]
+      "@/plugins/*": ["./src/plugins/*"],
+      "@lifebox/shared": ["../shared/src/index.ts"],
+      "@lifebox/shared/*": ["../shared/src/*"]
     }
   },
   "include": ["src/**/*"],

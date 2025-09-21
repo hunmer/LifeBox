@@ -23,6 +23,7 @@ export default defineConfig(async () => ({
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
+      "@lifebox/shared": path.resolve(__dirname, "../shared/src/index.ts"),
     },
   },
 
