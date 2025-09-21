@@ -1,0 +1,67 @@
+// Prisma schema file for LifeBox backend
+// Documentation: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../node_modules/.prisma/client"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// Channel model for chat functionality
+model Channel {
+  id          String    @id @default(cuid())
+  name        String    @unique
+  description String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  
+  // Relations
+  messages    Message[]
+  
+  @@map("channels")
+}
+
+// Message model for chat functionality  
+model Message {
+  id        String   @id @default(cuid())
+  content   String
+  author    String
+  type      String   @default("text") // text, image, file
+  timestamp DateTime @default(now())
+  
+  // Foreign keys
+  channelId String
+  channel   Channel  @relation(fields: [channelId], references: [id], onDelete: Cascade)
+  
+  @@map("messages")
+}
+
+// Event model for tracking system events
+model Event {
+  id          String   @id @default(cuid())
+  type        String
+  data        String   // JSON string
+  source      String
+  timestamp   DateTime @default(now())
+  processed   Boolean  @default(false)
+  
+  @@map("events")
+}
+
+// Plugin model for managing installed plugins
+model Plugin {
+  id          String   @id @default(cuid())
+  pluginId    String   @unique // Plugin's manifest ID
+  name        String
+  version     String
+  enabled     Boolean  @default(true)
+  config      String?  // JSON string for plugin configuration
+  installedAt DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@map("plugins")
+}
