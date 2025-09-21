@@ -1,4 +1,4 @@
-import type { PluginStorage } from '../../../../shared/src/types/plugin';
+import type { PluginStorage } from '@lifebox/shared';
 
 /**
  * PluginStorage 实现

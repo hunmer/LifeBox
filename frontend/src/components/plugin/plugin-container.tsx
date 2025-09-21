@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { PluginManager } from '../../lib/plugin-system/plugin-manager';
 import { PluginAPIManager, initializeGlobalPluginAPI } from '../../lib/plugin-system/plugin-api';
-import type { PluginInfo, PluginStatus } from '../../../../../shared/src/types/plugin';
+import type { PluginInfo, PluginStatus } from '../@lifebox/shared';
 
 interface PluginContainerProps {
   /** 插件管理器实例 */

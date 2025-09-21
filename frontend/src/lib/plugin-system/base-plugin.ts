@@ -1,4 +1,4 @@
-import type { PluginAPI, PluginManifest } from '../../../../shared/src/types/plugin';
+import type { PluginAPI, PluginManifest } from '@lifebox/shared';
 
 /**
  * BasePlugin 抽象基类

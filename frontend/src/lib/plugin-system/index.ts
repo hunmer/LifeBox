@@ -53,7 +53,7 @@ export type {
   DialogButton,
   MenuItem,
   RequestConfig
-} from '../../../../shared/src/types/plugin';
+} from '@lifebox/shared';
 
 export type {
   // 事件相关类型
@@ -69,7 +69,7 @@ export type {
   EventFactory,
   EventFilter,
   EventTransformer
-} from '../../../../shared/src/types/events';
+} from '@lifebox/shared';
 
 /**
  * 插件系统版本

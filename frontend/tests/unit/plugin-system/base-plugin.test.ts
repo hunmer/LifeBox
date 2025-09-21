@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { BasePlugin } from '../../../src/lib/plugin-system/base-plugin';
-import type { PluginAPI, PluginManifest } from '../../../../../shared/src/types/plugin';
+import type { PluginAPI, PluginManifest } from '@lifebox/shared';
 
 // Test plugin implementation
 class TestPlugin extends BasePlugin {

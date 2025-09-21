@@ -1,4 +1,4 @@
-import type { HTTPClient, RequestConfig } from '../../../../shared/src/types/plugin';
+import type { HTTPClient, RequestConfig } from '@lifebox/shared';
 
 /**
  * HTTPClient 实现

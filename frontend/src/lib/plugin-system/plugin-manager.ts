@@ -3,7 +3,7 @@ import type {
   PluginInfo, 
   PluginStatus, 
   PluginManifest 
-} from '../../../../shared/src/types/plugin';
+} from '@lifebox/shared';
 
 /**
  * PluginManager 类

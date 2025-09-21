@@ -166,7 +166,7 @@ class PluginSystemVerification {
   private async testStorage(): Promise<void> {
     await this.test('Storage functionality', async () => {
       // Use memory storage for testing to avoid browser dependencies
-      const storage = new (class implements typeof BrowserPluginStorage.prototype {
+      class TestStorage {
         private data = new Map();
         
         async get(key: string) { return this.data.get(key) || null; }
@@ -174,7 +174,9 @@ class PluginSystemVerification {
         async remove(key: string) { this.data.delete(key); }
         async clear() { this.data.clear(); }
         async keys() { return Array.from(this.data.keys()); }
-      })();
+      }
+      
+      const storage = new TestStorage();
       
       await storage.set('test-key', { value: 'test' });
       const result = await storage.get('test-key');

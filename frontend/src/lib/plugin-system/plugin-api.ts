@@ -6,7 +6,7 @@ import type {
   PluginAPI, 
   ConfigManager, 
   Logger 
-} from '../../../../shared/src/types/plugin';
+} from '@lifebox/shared';
 
 /**
  * 配置管理器实现

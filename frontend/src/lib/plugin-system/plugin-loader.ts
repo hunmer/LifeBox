@@ -4,7 +4,7 @@ import type {
   PluginStatus,
   BasePlugin,
   PluginAPI 
-} from '../../../../shared/src/types/plugin';
+} from '@lifebox/shared';
 
 /**
  * PluginLoader 类

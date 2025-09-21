@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
 import { PluginLoader } from '../../../src/lib/plugin-system/plugin-loader';
-import type { PluginManifest, PluginInfo } from '../../../../../shared/src/types/plugin';
+import type { PluginManifest, PluginInfo } from '@lifebox/shared';
 
 describe('PluginLoader', () => {
   let pluginLoader: PluginLoader;

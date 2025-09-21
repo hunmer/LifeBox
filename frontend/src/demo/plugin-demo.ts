@@ -10,7 +10,7 @@ import {
   createPluginAPI,
   BrowserPluginStorage 
 } from '../lib/plugin-system';
-import type { PluginManifest, PluginAPI } from '../../../../shared/src/types/plugin';
+import type { PluginManifest, PluginAPI } from '@lifebox/shared';
 
 // Demo plugin implementation
 class DemoPlugin extends BasePlugin {

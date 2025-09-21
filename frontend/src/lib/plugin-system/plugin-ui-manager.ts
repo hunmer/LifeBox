@@ -1,4 +1,4 @@
-import type { UIManager, DialogConfig, MenuItem } from '../../../../shared/src/types/plugin';
+import type { UIManager, DialogConfig, MenuItem } from '@lifebox/shared';
 
 /**
  * PluginUIManager 实现
