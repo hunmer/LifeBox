@@ -55,4 +55,7 @@ export function createApp() {
   return app;
 }
 
+// Create and export app instance for testing
+export const app = createApp();
+
 export default createApp;
