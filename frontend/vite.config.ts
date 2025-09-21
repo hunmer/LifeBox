@@ -1,6 +1,7 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import path from "path";
+/// <reference types="vitest" />
 
 // https://vitejs.dev/config/
 export default defineConfig(async () => ({
@@ -25,6 +26,13 @@ export default defineConfig(async () => ({
       "@": path.resolve(__dirname, "./src"),
       "@lifebox/shared": path.resolve(__dirname, "../shared/src/index.ts"),
     },
+  },
+
+  // Test configuration
+  test: {
+    globals: true,
+    environment: 'jsdom',
+    setupFiles: ['./src/test/setup.ts'],
   },
 
   // Build options
