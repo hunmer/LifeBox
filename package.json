@@ -1,0 +1,52 @@
+{
+  "name": "lifebox",
+  "version": "1.0.0",
+  "description": "跨平台全能纪录应用 - 基于 Tauri 前端 + Node.js 后端的事件驱动插件系统",
+  "private": true,
+  "workspaces": [
+    "frontend",
+    "backend", 
+    "shared"
+  ],
+  "scripts": {
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "dev:frontend": "npm run dev --workspace=frontend",
+    "dev:backend": "npm run dev --workspace=backend",
+    "build": "npm run build --workspace=shared && npm run build --workspace=backend && npm run build --workspace=frontend",
+    "build:frontend": "npm run build --workspace=frontend",
+    "build:backend": "npm run build --workspace=backend",
+    "build:shared": "npm run build --workspace=shared",
+    "test": "npm run test --workspace=frontend && npm run test --workspace=backend && npm run test --workspace=shared",
+    "test:frontend": "npm run test --workspace=frontend",
+    "test:backend": "npm run test --workspace=backend",
+    "test:shared": "npm run test --workspace=shared",
+    "lint": "npm run lint --workspace=frontend && npm run lint --workspace=backend && npm run lint --workspace=shared",
+    "lint:fix": "npm run lint:fix --workspace=frontend && npm run lint:fix --workspace=backend && npm run lint:fix --workspace=shared",
+    "clean": "npm run clean --workspace=frontend && npm run clean --workspace=backend && npm run clean --workspace=shared",
+    "install:all": "npm install && npm install --workspace=frontend && npm install --workspace=backend && npm install --workspace=shared"
+  },
+  "devDependencies": {
+    "concurrently": "^8.0.0",
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lifebox/lifebox.git"
+  },
+  "keywords": [
+    "lifebox",
+    "tauri",
+    "nodejs", 
+    "typescript",
+    "plugin-system",
+    "event-driven",
+    "cross-platform"
+  ],
+  "author": "LifeBox Team",
+  "license": "MIT"
+}
