@@ -25,17 +25,17 @@
       "@/database/*": ["src/database/*"],
       "@/events/*": ["src/events/*"]
     },
-    "types": ["node", "jest"],
+    "types": ["node"],
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true
   },
   "include": [
-    "src/**/*",
-    "tests/**/*"
+    "src/**/*"
   ],
   "exclude": [
     "node_modules",
     "dist",
+    "tests",
     "**/*.spec.ts",
     "**/*.test.ts"
   ],
