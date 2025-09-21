@@ -1,10 +1,11 @@
 import { Router, Request, Response } from 'express';
 import { asyncHandler } from '@/utils/error-handler.js';
-import { getDatabase } from '@/database/connection.js';
+import { MessageService } from '@/services/message.service.js';
+import { eventBus } from '@/events/event-bus.js';
 import { z } from 'zod';
 
 const router = Router();
-const db = getDatabase();
+const messageService = new MessageService();
 
 // Validation schemas
 const createMessageSchema = z.object({
@@ -14,14 +15,19 @@ const createMessageSchema = z.object({
   channelId: z.string(),
 });
 
+const updateMessageSchema = z.object({
+  content: z.string().min(1).max(2000).optional(),
+  type: z.enum(['text', 'image', 'file']).optional(),
+});
+
 /**
- * GET /api/messages?channelId=xxx&limit=50&offset=0
+ * GET /api/messages?channelId=xxx&limit=50&page=1
  * Get messages for a channel
  */
 router.get('/', asyncHandler(async (req: Request, res: Response) => {
   const channelId = req.query.channelId as string;
   const limit = parseInt(req.query.limit as string) || 50;
-  const offset = parseInt(req.query.offset as string) || 0;
+  const page = parseInt(req.query.page as string) || 1;
 
   if (!channelId) {
     return res.status(400).json({
@@ -30,26 +36,51 @@ router.get('/', asyncHandler(async (req: Request, res: Response) => {
     });
   }
 
-  const messages = await db.message.findMany({
-    where: { channelId },
-    orderBy: { timestamp: 'desc' },
-    take: limit,
-    skip: offset,
-    include: {
-      channel: {
-        select: { id: true, name: true }
-      }
-    }
-  });
+  // Validate channel exists
+  const channelExists = await messageService.validateChannelExists(channelId);
+  if (!channelExists) {
+    return res.status(404).json({
+      success: false,
+      error: { message: 'Channel not found' }
+    });
+  }
+
+  const [messages, totalMessages] = await Promise.all([
+    messageService.getMessagesByChannelIdPaginated(channelId, page, limit),
+    messageService.getMessageCount(channelId)
+  ]);
 
   res.json({
     success: true,
     data: messages,
     pagination: {
       limit,
-      offset,
-      total: await db.message.count({ where: { channelId } })
+      page,
+      total: totalMessages,
+      totalPages: Math.ceil(totalMessages / limit)
     }
+  });
+}));
+
+/**
+ * GET /api/messages/:id
+ * Get message by ID
+ */
+router.get('/:id', asyncHandler(async (req: Request, res: Response) => {
+  const { id } = req.params;
+
+  const message = await messageService.getMessageById(id);
+
+  if (!message) {
+    return res.status(404).json({
+      success: false,
+      error: { message: 'Message not found' }
+    });
+  }
+
+  res.json({
+    success: true,
+    data: message,
   });
 }));
 
@@ -60,31 +91,58 @@ router.get('/', asyncHandler(async (req: Request, res: Response) => {
 router.post('/', asyncHandler(async (req: Request, res: Response) => {
   const validatedData = createMessageSchema.parse(req.body);
 
-  // Verify channel exists
-  const channel = await db.channel.findUnique({
-    where: { id: validatedData.channelId }
-  });
+  try {
+    const message = await messageService.createMessageWithValidation(validatedData);
 
-  if (!channel) {
+    // Emit real-time event for new message
+    await eventBus.emitEvent('chat.message.created', {
+      message,
+      channelId: message.channelId
+    }, 'api');
+
+    res.status(201).json({
+      success: true,
+      data: message,
+      message: 'Message created successfully',
+    });
+  } catch (error) {
+    if (error instanceof Error && error.message.includes('does not exist')) {
+      return res.status(404).json({
+        success: false,
+        error: { message: error.message }
+      });
+    }
+    throw error;
+  }
+}));
+
+/**
+ * PUT /api/messages/:id
+ * Update message
+ */
+router.put('/:id', asyncHandler(async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const validatedData = updateMessageSchema.parse(req.body);
+
+  const message = await messageService.updateMessage(id, validatedData);
+
+  if (!message) {
     return res.status(404).json({
       success: false,
-      error: { message: 'Channel not found' }
+      error: { message: 'Message not found' }
     });
   }
 
-  const message = await db.message.create({
-    data: validatedData,
-    include: {
-      channel: {
-        select: { id: true, name: true }
-      }
-    }
-  });
+  // Emit real-time event for message update
+  await eventBus.emitEvent('chat.message.updated', {
+    message,
+    channelId: message.channelId
+  }, 'api');
 
-  res.status(201).json({
+  res.json({
     success: true,
     data: message,
-    message: 'Message created successfully',
+    message: 'Message updated successfully',
   });
 }));
 
@@ -95,15 +153,25 @@ router.post('/', asyncHandler(async (req: Request, res: Response) => {
 router.delete('/:id', asyncHandler(async (req: Request, res: Response) => {
   const { id } = req.params;
 
-  const message = await db.message.findUnique({ where: { id } });
-  if (!message) {
+  // Get message details before deletion for the event
+  const messageBeforeDelete = await messageService.getMessageById(id);
+  
+  const success = await messageService.deleteMessage(id);
+
+  if (!success) {
     return res.status(404).json({
       success: false,
       error: { message: 'Message not found' }
     });
   }
 
-  await db.message.delete({ where: { id } });
+  // Emit real-time event for message deletion
+  if (messageBeforeDelete) {
+    await eventBus.emitEvent('chat.message.deleted', {
+      messageId: id,
+      channelId: messageBeforeDelete.channelId
+    }, 'api');
+  }
 
   res.json({
     success: true,

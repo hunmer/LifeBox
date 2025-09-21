@@ -1,10 +1,11 @@
 import { Router, Request, Response } from 'express';
 import { asyncHandler } from '@/utils/error-handler.js';
-import { getDatabase } from '@/database/connection.js';
+import { ChannelService } from '@/services/channel.service.js';
+import { eventBus } from '@/events/event-bus.js';
 import { z } from 'zod';
 
 const router = Router();
-const db = getDatabase();
+const channelService = new ChannelService();
 
 // Validation schemas
 const createChannelSchema = z.object({
@@ -12,19 +13,17 @@ const createChannelSchema = z.object({
   description: z.string().max(500).optional(),
 });
 
+const updateChannelSchema = z.object({
+  name: z.string().min(1).max(100).optional(),
+  description: z.string().max(500).nullable().optional(),
+});
+
 /**
  * GET /api/channels
  * Get all channels
  */
 router.get('/', asyncHandler(async (req: Request, res: Response) => {
-  const channels = await db.channel.findMany({
-    include: {
-      _count: {
-        select: { messages: true }
-      }
-    },
-    orderBy: { createdAt: 'desc' }
-  });
+  const channels = await channelService.getAllChannels();
 
   res.json({
     success: true,
@@ -40,14 +39,7 @@ router.get('/', asyncHandler(async (req: Request, res: Response) => {
 router.get('/:id', asyncHandler(async (req: Request, res: Response) => {
   const { id } = req.params;
 
-  const channel = await db.channel.findUnique({
-    where: { id },
-    include: {
-      _count: {
-        select: { messages: true }
-      }
-    }
-  });
+  const channel = await channelService.getChannelWithMessageCount(id);
 
   if (!channel) {
     return res.status(404).json({
@@ -69,15 +61,67 @@ router.get('/:id', asyncHandler(async (req: Request, res: Response) => {
 router.post('/', asyncHandler(async (req: Request, res: Response) => {
   const validatedData = createChannelSchema.parse(req.body);
 
-  const channel = await db.channel.create({
-    data: validatedData,
-  });
+  try {
+    const channel = await channelService.createChannel(validatedData);
 
-  res.status(201).json({
-    success: true,
-    data: channel,
-    message: 'Channel created successfully',
-  });
+    // Emit real-time event for new channel
+    await eventBus.emitEvent('chat.channel.created', {
+      channel
+    }, 'api');
+
+    res.status(201).json({
+      success: true,
+      data: channel,
+      message: 'Channel created successfully',
+    });
+  } catch (error) {
+    if (error instanceof Error && error.message.includes('already exists')) {
+      return res.status(409).json({
+        success: false,
+        error: { message: error.message }
+      });
+    }
+    throw error;
+  }
+}));
+
+/**
+ * PUT /api/channels/:id
+ * Update channel
+ */
+router.put('/:id', asyncHandler(async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const validatedData = updateChannelSchema.parse(req.body);
+
+  try {
+    const channel = await channelService.updateChannel(id, validatedData);
+
+    if (!channel) {
+      return res.status(404).json({
+        success: false,
+        error: { message: 'Channel not found' }
+      });
+    }
+
+    // Emit real-time event for channel update
+    await eventBus.emitEvent('chat.channel.updated', {
+      channel
+    }, 'api');
+
+    res.json({
+      success: true,
+      data: channel,
+      message: 'Channel updated successfully',
+    });
+  } catch (error) {
+    if (error instanceof Error && error.message.includes('already exists')) {
+      return res.status(409).json({
+        success: false,
+        error: { message: error.message }
+      });
+    }
+    throw error;
+  }
 }));
 
 /**
@@ -87,15 +131,25 @@ router.post('/', asyncHandler(async (req: Request, res: Response) => {
 router.delete('/:id', asyncHandler(async (req: Request, res: Response) => {
   const { id } = req.params;
 
-  const channel = await db.channel.findUnique({ where: { id } });
-  if (!channel) {
+  // Get channel details before deletion for the event
+  const channelBeforeDelete = await channelService.getChannelById(id);
+
+  const success = await channelService.deleteChannel(id);
+
+  if (!success) {
     return res.status(404).json({
       success: false,
       error: { message: 'Channel not found' }
     });
   }
 
-  await db.channel.delete({ where: { id } });
+  // Emit real-time event for channel deletion
+  if (channelBeforeDelete) {
+    await eventBus.emitEvent('chat.channel.deleted', {
+      channelId: id,
+      channelName: channelBeforeDelete.name
+    }, 'api');
+  }
 
   res.json({
     success: true,
