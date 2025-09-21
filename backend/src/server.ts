@@ -1,6 +1,8 @@
 import { createApp } from '@/app.js';
 import { initializeDatabase } from '@/database/connection.js';
-import { createWebSocketServer } from '@/events/websocket-server.js';
+import { createWebSocketServer } from '@/websocket/websocket-server.js';
+import { EventHandlers } from '@/events/event-handlers.js';
+import { eventBus } from '@/events/event-bus.js';
 
 const PORT = process.env.PORT || 3001;
 const WS_PORT = process.env.WS_PORT || 3002;
@@ -11,6 +13,18 @@ async function startServer() {
     console.log('🔄 Initializing database...');
     await initializeDatabase();
     console.log('✅ Database initialized successfully');
+
+    // Initialize event handlers
+    console.log('🔄 Initializing event handlers...');
+    EventHandlers.initialize();
+    console.log('✅ Event handlers initialized successfully');
+
+    // Emit system startup event
+    await eventBus.emitEvent('system.startup', {
+      version: '1.0.0',
+      environment: process.env.NODE_ENV || 'development',
+      ports: { http: PORT, websocket: WS_PORT }
+    }, 'system');
 
     // Create Express app
     const app = createApp();
@@ -29,6 +43,13 @@ async function startServer() {
     // Graceful shutdown
     process.on('SIGTERM', () => {
       console.log('🛑 SIGTERM received, shutting down gracefully...');
+      
+      // Emit shutdown event
+      eventBus.emitEvent('system.shutdown', {
+        reason: 'SIGTERM',
+        timestamp: new Date()
+      }, 'system');
+      
       server.close(() => {
         console.log('✅ HTTP server closed');
         wsServer.close(() => {
@@ -40,6 +61,13 @@ async function startServer() {
 
     process.on('SIGINT', () => {
       console.log('🛑 SIGINT received, shutting down gracefully...');
+      
+      // Emit shutdown event
+      eventBus.emitEvent('system.shutdown', {
+        reason: 'SIGINT',
+        timestamp: new Date()
+      }, 'system');
+      
       server.close(() => {
         console.log('✅ HTTP server closed');
         wsServer.close(() => {
