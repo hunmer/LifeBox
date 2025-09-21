@@ -5,7 +5,7 @@
   "private": true,
   "workspaces": [
     "frontend",
-    "backend", 
+    "backend",
     "shared"
   ],
   "scripts": {
@@ -34,13 +34,14 @@
     "clean": "npm run clean --workspace=frontend && npm run clean --workspace=backend && npm run clean --workspace=shared",
     "install:all": "npm install && npm install --workspace=frontend && npm install --workspace=backend && npm install --workspace=shared",
     "setup": "./scripts/dev-setup.sh",
-    "precommit": "npm run lint && npm run typecheck && npm run test:unit",
-    "prepare": "npm run setup"
+    "precommit": "npm run lint && npm run typecheck && npm run test:unit"
   },
   "devDependencies": {
-    "concurrently": "^8.0.0",
     "@types/node": "^20.0.0",
-    "typescript": "^5.0.0"
+    "@vitejs/plugin-react": "^5.0.3",
+    "concurrently": "^8.0.0",
+    "typescript": "^5.0.0",
+    "vite": "^7.1.6"
   },
   "engines": {
     "node": ">=18.0.0",
@@ -53,7 +54,7 @@
   "keywords": [
     "lifebox",
     "tauri",
-    "nodejs", 
+    "nodejs",
     "typescript",
     "plugin-system",
     "event-driven",

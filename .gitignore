@@ -132,3 +132,5 @@ desktop.ini
 .directory
 .Trash-*
 .nfs*
+
+frontend/src-tauri/target/*
