@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { PluginManager } from '../../lib/plugin-system/plugin-manager';
-import { PluginAPIManager, initializeGlobalPluginAPI } from '../../lib/plugin-system/plugin-api';
-import type { PluginInfo, PluginStatus } from '../@lifebox/shared';
+import { initializeGlobalPluginAPI } from '../../lib/plugin-system/plugin-api';
+import type { PluginInfo, PluginStatus } from '@lifebox/shared';
 
 interface PluginContainerProps {
   /** 插件管理器实例 */
@@ -25,7 +25,7 @@ export const PluginContainer: React.FC<PluginContainerProps> = ({
   autoInitializeAPI = true
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
-  const [plugins, setPlugins] = useState<PluginInfo[]>([]);
+  const [_plugins, setPlugins] = useState<PluginInfo[]>([]);
   const [isInitialized, setIsInitialized] = useState(false);
   const pluginManagerRef = useRef<PluginManager | null>(null);
 
@@ -259,7 +259,7 @@ export const PluginManagerPanel: React.FC<PluginManagerPanelProps> = ({
               <div style={{ marginBottom: '16px' }}>
                 <strong>Permissions:</strong>
                 <ul style={{ margin: '4px 0', paddingLeft: '20px' }}>
-                  {selectedPluginInfo.manifest.permissions.map((permission, index) => (
+                  {selectedPluginInfo.manifest.permissions.map((permission: any, index: number) => (
                     <li key={index} style={{ fontSize: '14px' }}>{permission}</li>
                   ))}
                 </ul>

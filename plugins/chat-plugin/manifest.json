@@ -1,0 +1,66 @@
+{
+  "id": "lifebox.chat.plugin",
+  "name": "LifeBox聊天插件",
+  "version": "1.0.0",
+  "description": "LifeBox内置聊天功能插件，提供多频道实时聊天、消息管理、用户状态和文件传输等功能。",
+  "entry": "chat-plugin.js",
+  "styles": "chat-plugin.css",
+  "icon": "assets/chat-icon.svg",
+  "permissions": [
+    "http:request",
+    "storage:local",
+    "storage:session",
+    "events:listen",
+    "events:emit",
+    "ui:manipulate",
+    "system:notification"
+  ],
+  "author": "LifeBox Team",
+  "homepage": "https://github.com/lifebox/chat-plugin",
+  "minSystemVersion": "1.0.0",
+  "dependencies": [],
+  "config": {
+    "properties": {
+      "serverUrl": {
+        "type": "string",
+        "title": "聊天服务器地址",
+        "description": "WebSocket连接的聊天服务器地址",
+        "default": "ws://localhost:3001"
+      },
+      "maxMessages": {
+        "type": "number",
+        "title": "最大消息缓存数",
+        "description": "本地缓存的最大消息数量",
+        "default": 1000,
+        "minimum": 100,
+        "maximum": 5000
+      },
+      "enableNotifications": {
+        "type": "boolean",
+        "title": "启用桌面通知",
+        "description": "是否在收到新消息时显示桌面通知",
+        "default": true
+      },
+      "enableSound": {
+        "type": "boolean",
+        "title": "启用声音提醒",
+        "description": "是否在收到新消息时播放声音提醒",
+        "default": true
+      },
+      "theme": {
+        "type": "string",
+        "title": "聊天界面主题",
+        "description": "选择聊天界面的显示主题",
+        "default": "auto",
+        "enum": ["light", "dark", "auto"]
+      },
+      "autoJoinChannels": {
+        "type": "array",
+        "title": "自动加入的频道",
+        "description": "启动时自动加入的频道ID列表",
+        "default": ["general"]
+      }
+    },
+    "required": ["serverUrl", "maxMessages"]
+  }
+}

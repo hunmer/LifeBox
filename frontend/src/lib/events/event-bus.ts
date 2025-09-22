@@ -8,7 +8,6 @@
 import { EventEmitter } from 'events';
 import type {
   LifeBoxEvent,
-  EventHandler,
   EventMiddleware,
   EventListenerConfig,
   EventBusConfig,
@@ -324,11 +323,11 @@ export class EventBus extends EventEmitter {
    * 启用调试模式
    */
   private enableDebugMode(): void {
-    this.on('newListener', (event, listener) => {
+    this.on('newListener', (event, _listener) => {
       this.log('New listener added', { event });
     });
 
-    this.on('removeListener', (event, listener) => {
+    this.on('removeListener', (event, _listener) => {
       this.log('Listener removed', { event });
     });
   }

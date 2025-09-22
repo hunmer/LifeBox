@@ -2,7 +2,7 @@
   "$schema": "../node_modules/@tauri-apps/cli/schema.json",
   "productName": "LifeBox",
   "version": "1.0.0",
-  "identifier": "com.lifebox.app",
+  "identifier": "com.lifebox.desktop",
   "build": {
     "beforeDevCommand": "npm run dev",
     "beforeBuildCommand": "npm run build",
@@ -26,8 +26,7 @@
     }
   },
   "bundle": {
-    "active": true,
-    "targets": "all"
+    "active": false
   },
   "plugins": {}
 }

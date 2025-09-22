@@ -3,8 +3,6 @@ import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import dotenv from 'dotenv';
-import path from 'path';
-import { fileURLToPath } from 'url';
 import { errorHandler } from '@/utils/error-handler.js';
 import { notFoundHandler } from '@/utils/not-found-handler.js';
 
@@ -13,15 +11,11 @@ import channelsRouter from '@/routes/channels.js';
 import messagesRouter from '@/routes/messages.js';
 import eventsRouter from '@/routes/events.js';
 import healthRouter from '@/routes/health.js';
+import pluginsRouter from '@/routes/plugins.js';
 import pluginFilesRouter from '@/routes/plugin-files.js';
-import staticRouter from '@/routes/static.js';
 
 // Load environment variables
 dotenv.config();
-
-// Get current directory for ES modules
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 export function createApp() {
   const app = express();
@@ -48,16 +42,12 @@ export function createApp() {
   app.use(express.json({ limit: '10mb' }));
   app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-  // Static file serving
-  app.use('/public', staticRouter);
-
   // API routes
   app.use('/api/health', healthRouter);
   app.use('/api/channels', channelsRouter);
   app.use('/api/messages', messagesRouter);
   app.use('/api/events', eventsRouter);
-
-  // Keep plugin files API for downloads only
+  app.use('/api/plugins', pluginsRouter);
   app.use('/api/plugins', pluginFilesRouter);
 
   // 404 handler

@@ -235,7 +235,7 @@ export const errorHandlingMiddleware: EventMiddleware = async (event: LifeBoxEve
       (window as any).LifeBoxAPI.events.emit('system:middleware-error', {
         originalEventId: event.id,
         originalEventType: event.type,
-        error: error.message,
+        error: error instanceof Error ? error.message : String(error),
         timestamp: Date.now(),
       });
     }

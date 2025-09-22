@@ -358,3 +358,204 @@ export abstract class BasePlugin {
     return this.manifest.version;
   }
 }
+
+/**
+ * 插件源类型枚举
+ */
+export enum PluginSourceType {
+  /** 官方源 */
+  OFFICIAL = 'official',
+  /** 社区源 */
+  COMMUNITY = 'community',
+  /** 本地源 */
+  LOCAL = 'local',
+  /** 第三方源 */
+  THIRD_PARTY = 'third_party',
+}
+
+/**
+ * 插件源配置
+ */
+export interface PluginSource {
+  /** 源唯一标识符 */
+  id: string;
+  /** 源名称 */
+  name: string;
+  /** 源描述 */
+  description: string;
+  /** 源URL */
+  url: string;
+  /** 源类型 */
+  type: PluginSourceType;
+  /** 是否启用 */
+  enabled: boolean;
+  /** 是否验证SSL */
+  verifySSL?: boolean;
+  /** 认证信息 */
+  auth?: PluginSourceAuth;
+  /** 最后更新时间 */
+  lastUpdated?: number;
+  /** 插件数量 */
+  pluginCount?: number;
+  /** 源图标 */
+  icon?: string;
+  /** 源版本 */
+  version?: string;
+}
+
+/**
+ * 插件源认证信息
+ */
+export interface PluginSourceAuth {
+  /** 认证类型 */
+  type: 'none' | 'basic' | 'token' | 'api_key';
+  /** 用户名（basic认证） */
+  username?: string;
+  /** 密码（basic认证） */
+  password?: string;
+  /** 令牌（token认证） */
+  token?: string;
+  /** API密钥（api_key认证） */
+  apiKey?: string;
+  /** 自定义请求头 */
+  headers?: Record<string, string>;
+}
+
+/**
+ * 插件源中的插件信息
+ */
+export interface SourcePluginInfo {
+  /** 插件ID */
+  id: string;
+  /** 插件名称 */
+  name: string;
+  /** 插件版本 */
+  version: string;
+  /** 插件描述 */
+  description: string;
+  /** 插件作者 */
+  author?: string;
+  /** 插件图标 */
+  icon?: string;
+  /** 插件截图 */
+  screenshots?: string[];
+  /** 插件标签 */
+  tags?: string[];
+  /** 插件分类 */
+  category?: string;
+  /** 下载地址 */
+  downloadUrl: string;
+  /** 插件大小（字节） */
+  size?: number;
+  /** 下载次数 */
+  downloads?: number;
+  /** 插件评分 */
+  rating?: number;
+  /** 最后更新时间 */
+  lastUpdated?: number;
+  /** 最小系统版本 */
+  minSystemVersion?: string;
+  /** 是否已安装 */
+  isInstalled?: boolean;
+  /** 已安装版本 */
+  installedVersion?: string;
+  /** 是否有更新 */
+  hasUpdate?: boolean;
+  /** 是否为推荐插件 */
+  featured?: boolean;
+  /** 插件主页 */
+  homepage?: string;
+  /** 许可证 */
+  license?: string;
+  /** 更新日志 */
+  changelog?: PluginChangelogEntry[];
+  /** 插件清单（完整信息） */
+  manifest?: PluginManifest;
+}
+
+/**
+ * 插件更新日志条目
+ */
+export interface PluginChangelogEntry {
+  /** 版本号 */
+  version: string;
+  /** 更新日期 */
+  date: number;
+  /** 更新内容 */
+  changes: string[];
+}
+
+/**
+ * 插件源响应格式
+ */
+export interface PluginSourceResponse {
+  /** 插件列表 */
+  plugins: SourcePluginInfo[];
+  /** 总数 */
+  total: number;
+  /** 当前页 */
+  page?: number;
+  /** 每页数量 */
+  pageSize?: number;
+  /** 总页数 */
+  totalPages?: number;
+}
+
+/**
+ * 仓库统计信息
+ */
+export interface RepositoryStats {
+  /** 插件总数 */
+  totalPlugins: number;
+  /** 总下载量 */
+  totalDownloads: number;
+  /** 平均评分 */
+  averageRating: number;
+  /** 分类统计 */
+  categoryStats: Record<string, number>;
+  /** 最后更新时间 */
+  lastUpdated: number;
+}
+
+/**
+ * 插件安装选项
+ */
+export interface PluginInstallOptions {
+  /** 是否强制安装（覆盖已存在） */
+  force?: boolean;
+  /** 是否自动启用 */
+  autoEnable?: boolean;
+  /** 安装后的回调 */
+  onProgress?: (progress: number, message: string) => void;
+  /** 安装完成的回调 */
+  onComplete?: (pluginInfo: PluginInfo) => void;
+  /** 安装失败的回调 */
+  onError?: (error: Error) => void;
+}
+
+/**
+ * 插件搜索过滤条件
+ */
+export interface PluginSearchFilter {
+  /** 搜索关键词 */
+  query?: string;
+  /** 插件分类 */
+  category?: string;
+  /** 插件标签 */
+  tags?: string[];
+  /** 作者 */
+  author?: string;
+  /** 评分范围 */
+  rating?: {
+    min?: number;
+    max?: number;
+  };
+  /** 排序方式 */
+  sortBy?: 'name' | 'downloads' | 'rating' | 'lastUpdated';
+  /** 排序方向 */
+  sortOrder?: 'asc' | 'desc';
+  /** 分页 */
+  page?: number;
+  /** 每页数量 */
+  pageSize?: number;
+}

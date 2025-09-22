@@ -3,14 +3,13 @@
  * This file demonstrates how to use the plugin system programmatically
  */
 
-import { 
-  PluginSystem, 
-  PluginManager,
+import {
+  PluginSystem,
   BasePlugin,
-  createPluginAPI,
-  BrowserPluginStorage 
+  createPluginAPI
 } from '../lib/plugin-system';
-import type { PluginManifest, PluginAPI } from '@lifebox/shared';
+import { PluginPermission } from '@lifebox/shared';
+import type { PluginManifest } from '@lifebox/shared';
 
 // Demo plugin implementation
 class DemoPlugin extends BasePlugin {
@@ -43,7 +42,7 @@ class DemoPlugin extends BasePlugin {
     });
 
     // Listen to events
-    this.on('demo:test-event', (event) => {
+    this.on('demo:test-event', (event: any) => {
       this.info('Received test event:', event);
     });
   }
@@ -80,7 +79,7 @@ export async function runPluginSystemDemo(): Promise<void> {
       version: '1.0.0',
       description: 'A demonstration plugin for testing the plugin system',
       entry: 'demo.js',
-      permissions: ['storage:local', 'events:emit', 'ui:manipulate']
+      permissions: [PluginPermission.LOCAL_STORAGE, PluginPermission.EVENT_EMIT, PluginPermission.UI_MANIPULATE]
     };
 
     // 4. Create and test plugin instance
@@ -132,6 +131,6 @@ export async function runPluginSystemDemo(): Promise<void> {
 export { DemoPlugin };
 
 // Auto-run demo if in development mode
-if (import.meta.env?.DEV) {
+if (typeof import.meta !== 'undefined' && (import.meta as any).env?.DEV) {
   console.log('Development mode detected, plugin demo available via runPluginSystemDemo()');
 }

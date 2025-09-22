@@ -1,0 +1,263 @@
+{
+  "plugins": [
+    {
+      "id": "lifebox.chat.plugin",
+      "name": "LifeBox聊天插件",
+      "version": "1.0.0",
+      "description": "LifeBox内置聊天功能插件，提供多频道实时聊天、消息管理、用户状态和文件传输等功能。",
+      "author": "LifeBox Team",
+      "icon": "💬",
+      "downloadUrl": "/plugins/lifebox.chat.plugin/chat-plugin.zip",
+      "category": "communication",
+      "tags": ["聊天", "实时通信", "多频道", "WebSocket"],
+      "size": 1572864,
+      "downloads": 5420,
+      "rating": 4.9,
+      "lastUpdated": 1726934400000,
+      "isInstalled": false,
+      "featured": true,
+      "homepage": "https://github.com/lifebox/chat-plugin",
+      "license": "MIT",
+      "minSystemVersion": "1.0.0",
+      "screenshots": [
+        "/plugins/lifebox.chat.plugin/screenshots/chat-interface.png",
+        "/plugins/lifebox.chat.plugin/screenshots/channel-management.png"
+      ],
+      "changelog": [
+        {
+          "version": "1.0.0",
+          "date": 1726934400000,
+          "changes": [
+            "初始版本发布",
+            "基础聊天功能实现",
+            "多频道支持",
+            "实时消息传输",
+            "主题系统支持"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "lifebox.note.plugin",
+      "name": "智能笔记插件",
+      "version": "2.1.0",
+      "description": "强大的笔记管理插件，支持Markdown编辑、标签分类、全文搜索、云同步等功能。",
+      "author": "LifeBox Community",
+      "icon": "📝",
+      "downloadUrl": "/plugins/lifebox.note.plugin/note-plugin.zip",
+      "category": "productivity",
+      "tags": ["笔记", "Markdown", "标签", "搜索", "云同步"],
+      "size": 2097152,
+      "downloads": 3250,
+      "rating": 4.7,
+      "lastUpdated": 1726848000000,
+      "isInstalled": true,
+      "featured": true,
+      "homepage": "https://github.com/lifebox/note-plugin",
+      "license": "MIT",
+      "minSystemVersion": "1.0.0",
+      "screenshots": [
+        "/plugins/lifebox.note.plugin/screenshots/editor.png",
+        "/plugins/lifebox.note.plugin/screenshots/tags.png"
+      ],
+      "changelog": [
+        {
+          "version": "2.1.0",
+          "date": 1726848000000,
+          "changes": [
+            "新增云同步功能",
+            "优化Markdown渲染性能",
+            "增加代码高亮支持",
+            "修复标签搜索bug"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "lifebox.weather.plugin",
+      "name": "天气预报插件",
+      "version": "1.3.2",
+      "description": "实时天气信息展示，支持多城市、7天预报、天气预警和美观的UI界面。",
+      "author": "WeatherDev",
+      "icon": "🌤️",
+      "downloadUrl": "/plugins/lifebox.weather.plugin/weather-plugin.zip",
+      "category": "utility",
+      "tags": ["天气", "预报", "实时", "多城市"],
+      "size": 1048576,
+      "downloads": 8900,
+      "rating": 4.6,
+      "lastUpdated": 1726761600000,
+      "isInstalled": false,
+      "featured": false,
+      "homepage": "https://github.com/weatherdev/lifebox-weather",
+      "license": "Apache-2.0",
+      "minSystemVersion": "1.0.0",
+      "screenshots": [
+        "/plugins/lifebox.weather.plugin/screenshots/main.png",
+        "/plugins/lifebox.weather.plugin/screenshots/forecast.png"
+      ],
+      "changelog": [
+        {
+          "version": "1.3.2",
+          "date": 1726761600000,
+          "changes": [
+            "修复定位服务问题",
+            "优化界面响应式设计",
+            "增加空气质量指数显示"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "lifebox.todo.plugin",
+      "name": "任务管理插件",
+      "version": "1.0.5",
+      "description": "高效的任务管理工具，支持项目分组、优先级设置、提醒通知和进度跟踪。",
+      "author": "ProductivityTeam",
+      "icon": "✅",
+      "downloadUrl": "/plugins/lifebox.todo.plugin/todo-plugin.zip",
+      "category": "productivity",
+      "tags": ["任务", "项目管理", "提醒", "GTD"],
+      "size": 1310720,
+      "downloads": 2180,
+      "rating": 4.8,
+      "lastUpdated": 1726675200000,
+      "isInstalled": false,
+      "featured": true,
+      "homepage": "https://github.com/productivity/lifebox-todo",
+      "license": "MIT",
+      "minSystemVersion": "1.0.0",
+      "screenshots": [
+        "/plugins/lifebox.todo.plugin/screenshots/dashboard.png",
+        "/plugins/lifebox.todo.plugin/screenshots/projects.png"
+      ],
+      "changelog": [
+        {
+          "version": "1.0.5",
+          "date": 1726675200000,
+          "changes": [
+            "增加重复任务功能",
+            "优化通知系统",
+            "添加数据导出功能"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "lifebox.calendar.plugin",
+      "name": "日历插件",
+      "version": "2.0.1",
+      "description": "功能完整的日历应用，支持事件管理、日程安排、提醒设置和多视图切换。",
+      "author": "CalendarTeam",
+      "icon": "📅",
+      "downloadUrl": "/plugins/lifebox.calendar.plugin/calendar-plugin.zip",
+      "category": "productivity",
+      "tags": ["日历", "事件", "日程", "提醒"],
+      "size": 1835008,
+      "downloads": 4560,
+      "rating": 4.5,
+      "lastUpdated": 1726588800000,
+      "isInstalled": true,
+      "featured": false,
+      "homepage": "https://github.com/calendar/lifebox-calendar",
+      "license": "GPL-3.0",
+      "minSystemVersion": "1.0.0",
+      "screenshots": [
+        "/plugins/lifebox.calendar.plugin/screenshots/month-view.png",
+        "/plugins/lifebox.calendar.plugin/screenshots/event-details.png"
+      ],
+      "changelog": [
+        {
+          "version": "2.0.1",
+          "date": 1726588800000,
+          "changes": [
+            "重构用户界面",
+            "增加周视图和日视图",
+            "优化事件搜索功能",
+            "修复时区显示问题"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "lifebox.music.plugin",
+      "name": "音乐播放器插件",
+      "version": "1.2.0",
+      "description": "轻量级音乐播放器，支持多种格式、播放列表管理和歌词显示功能。",
+      "author": "MusicDev",
+      "icon": "🎵",
+      "downloadUrl": "/plugins/lifebox.music.plugin/music-plugin.zip",
+      "category": "entertainment",
+      "tags": ["音乐", "播放器", "歌词", "播放列表"],
+      "size": 2621440,
+      "downloads": 6730,
+      "rating": 4.4,
+      "lastUpdated": 1726502400000,
+      "isInstalled": false,
+      "featured": false,
+      "homepage": "https://github.com/musicdev/lifebox-music",
+      "license": "MIT",
+      "minSystemVersion": "1.0.0",
+      "screenshots": [
+        "/plugins/lifebox.music.plugin/screenshots/player.png",
+        "/plugins/lifebox.music.plugin/screenshots/playlist.png"
+      ],
+      "changelog": [
+        {
+          "version": "1.2.0",
+          "date": 1726502400000,
+          "changes": [
+            "增加均衡器功能",
+            "支持歌词滚动显示",
+            "优化音质处理算法"
+          ]
+        }
+      ]
+    }
+  ],
+  "categories": [
+    {
+      "id": "communication",
+      "name": "通信交流",
+      "description": "聊天、通信和社交相关插件",
+      "icon": "💬"
+    },
+    {
+      "id": "productivity",
+      "name": "效率工具",
+      "description": "提升工作效率的工具和应用",
+      "icon": "⚡"
+    },
+    {
+      "id": "utility",
+      "name": "实用工具",
+      "description": "日常实用工具和小应用",
+      "icon": "🔧"
+    },
+    {
+      "id": "entertainment",
+      "name": "娱乐休闲",
+      "description": "娱乐、游戏和休闲相关插件",
+      "icon": "🎮"
+    },
+    {
+      "id": "development",
+      "name": "开发工具",
+      "description": "编程和开发相关工具",
+      "icon": "👨‍💻"
+    },
+    {
+      "id": "system",
+      "name": "系统工具",
+      "description": "系统管理和配置工具",
+      "icon": "⚙️"
+    }
+  ],
+  "metadata": {
+    "version": "1.0.0",
+    "lastUpdated": 1726934400000,
+    "totalPlugins": 6,
+    "totalDownloads": 31040,
+    "averageRating": 4.6
+  }
+}

@@ -3,12 +3,11 @@
  * This script performs basic checks to ensure the plugin system is working correctly
  */
 
-import { 
+import {
   PluginLoader,
-  BasePlugin, 
+  BasePlugin,
   PluginManager,
   EventBus,
-  BrowserPluginStorage,
   PluginUIManager,
   APIClient,
   createPluginAPI
@@ -194,7 +193,7 @@ class PluginSystemVerification {
     await this.test('UIManager functionality', async () => {
       // Mock DOM environment for testing
       const mockDocument = {
-        createElement: (tag: string) => ({
+        createElement: (_tag: string) => ({
           id: '',
           className: '',
           style: {},

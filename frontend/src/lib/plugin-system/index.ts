@@ -9,13 +9,16 @@
 export { PluginLoader } from './plugin-loader';
 export { BasePlugin } from './base-plugin';
 export { PluginManager } from './plugin-manager';
+import { PluginManager } from './plugin-manager';
+import type { PluginInfo } from '@lifebox/shared';
 
 // API 和服务
-export { 
-  createPluginAPI, 
-  PluginAPIManager, 
-  initializeGlobalPluginAPI 
+export {
+  createPluginAPI,
+  PluginAPIManager,
+  initializeGlobalPluginAPI
 } from './plugin-api';
+import { PluginAPIManager, initializeGlobalPluginAPI } from './plugin-api';
 
 export { EventBus } from '../events/event-bus';
 export { APIClient, APIError } from '../api/client';

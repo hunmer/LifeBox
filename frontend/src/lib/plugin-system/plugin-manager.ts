@@ -1,8 +1,8 @@
 import { PluginLoader } from './plugin-loader';
-import type { 
-  PluginInfo, 
-  PluginStatus, 
-  PluginManifest 
+import { PluginStatus } from '@lifebox/shared';
+import type {
+  PluginInfo,
+  PluginManifest
 } from '@lifebox/shared';
 
 /**

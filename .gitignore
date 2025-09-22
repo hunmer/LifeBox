@@ -135,3 +135,4 @@ desktop.ini
 .nfs*
 
 frontend/src-tauri/target/*
+wix314-binaries.zip

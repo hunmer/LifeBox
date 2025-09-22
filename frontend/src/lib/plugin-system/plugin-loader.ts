@@ -1,9 +1,9 @@
-import type { 
-  PluginManifest, 
-  PluginInfo, 
-  PluginStatus,
+import { PluginStatus } from '@lifebox/shared';
+import type {
+  PluginManifest,
+  PluginInfo,
   BasePlugin,
-  PluginAPI 
+  PluginAPI
 } from '@lifebox/shared';
 
 /**
@@ -70,12 +70,6 @@ export class PluginLoader {
       return pluginInfo;
 
     } catch (error) {
-      const pluginInfo = this.loadedPlugins.get('unknown') || {
-        manifest: { id: 'unknown' } as PluginManifest,
-        status: PluginStatus.ERROR,
-        error: error as Error
-      };
-      
       throw new Error(`Failed to load plugin: ${(error as Error).message}`);
     }
   }

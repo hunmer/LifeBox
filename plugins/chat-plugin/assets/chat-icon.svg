@@ -1,0 +1,10 @@
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M20 2H4C2.9 2 2 2.9 2 4V18L6 14H20C21.1 14 22 13.1 22 12V4C22 2.9 21.1 2 20 2Z" fill="currentColor"/>
+  <path d="M20 8H4V6H20V8Z" fill="white"/>
+  <path d="M17 11H4V9H17V11Z" fill="white"/>
+
+  <!-- 对话气泡装饰 -->
+  <circle cx="7" cy="16.5" r="1.5" fill="currentColor" opacity="0.7"/>
+  <circle cx="11" cy="18" r="1" fill="currentColor" opacity="0.5"/>
+  <circle cx="15" cy="17" r="0.8" fill="currentColor" opacity="0.6"/>
+</svg>

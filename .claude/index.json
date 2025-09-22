@@ -1,0 +1,224 @@
+{
+  "timestamp": "2025-09-22T00:00:00.000Z",
+  "project": {
+    "name": "LifeBox",
+    "type": "跨平台全能纪录应用",
+    "architecture": "Tauri前端 + Node.js后端分离架构",
+    "description": "基于事件驱动的插件系统，支持TDD开发模式的桌面应用"
+  },
+  "modules": [
+    {
+      "name": "frontend",
+      "path": "frontend/",
+      "type": "Tauri Desktop Application",
+      "language": "TypeScript",
+      "framework": "Tauri 2.0 + React 18",
+      "responsibilities": [
+        "桌面应用界面",
+        "插件系统前端",
+        "事件总线客户端",
+        "用户交互逻辑"
+      ],
+      "entryPoints": [
+        "frontend/src/main.tsx",
+        "frontend/src-tauri/src/main.rs"
+      ],
+      "keyFiles": [
+        "frontend/src/lib/plugin-system/plugin-loader.ts",
+        "frontend/src/lib/events/event-bus.ts",
+        "frontend/src/lib/plugin-system/base-plugin.ts",
+        "frontend/src/components/plugin/plugin-container.tsx"
+      ],
+      "dependencies": {
+        "core": ["react", "react-dom", "@tauri-apps/api"],
+        "ui": ["@radix-ui/react-*", "tailwindcss", "shadcn/ui"],
+        "state": ["zustand", "react-hook-form"],
+        "testing": ["vitest", "@testing-library/react", "playwright"]
+      },
+      "scripts": {
+        "dev": "vite",
+        "build": "tsc && vite build",
+        "test": "vitest",
+        "tauri:dev": "tauri dev",
+        "tauri:build": "tauri build"
+      }
+    },
+    {
+      "name": "backend",
+      "path": "backend/",
+      "type": "REST API Server",
+      "language": "TypeScript",
+      "framework": "Node.js + Express",
+      "responsibilities": [
+        "REST API 服务",
+        "WebSocket 实时通信",
+        "数据库管理",
+        "事件系统后端"
+      ],
+      "entryPoints": [
+        "backend/src/server.ts",
+        "backend/src/app.ts"
+      ],
+      "keyFiles": [
+        "backend/src/routes/channels.ts",
+        "backend/src/routes/messages.ts",
+        "backend/src/routes/events.ts",
+        "backend/src/services/channel.service.ts",
+        "backend/src/events/event-bus.ts",
+        "backend/src/websocket/websocket-server.ts"
+      ],
+      "dependencies": {
+        "core": ["express", "cors", "helmet", "morgan"],
+        "database": ["@prisma/client", "prisma"],
+        "realtime": ["ws"],
+        "security": ["bcryptjs", "jsonwebtoken"],
+        "testing": ["jest", "supertest", "testcontainers"]
+      },
+      "scripts": {
+        "dev": "tsx watch src/server.ts",
+        "build": "tsc && tsc-alias",
+        "test": "jest",
+        "db:migrate": "prisma migrate dev"
+      }
+    },
+    {
+      "name": "shared",
+      "path": "shared/",
+      "type": "Shared Library",
+      "language": "TypeScript",
+      "framework": "Pure TypeScript",
+      "responsibilities": [
+        "类型定义共享",
+        "常量定义",
+        "工具函数",
+        "验证schemas"
+      ],
+      "entryPoints": [
+        "shared/src/index.ts"
+      ],
+      "keyFiles": [
+        "shared/src/types/events.ts",
+        "shared/src/types/plugin.ts",
+        "shared/src/types/chat.ts",
+        "shared/src/types/api.ts",
+        "shared/src/constants/index.ts"
+      ],
+      "dependencies": {
+        "core": ["zod"],
+        "testing": ["jest", "ts-jest"]
+      },
+      "scripts": {
+        "build": "tsc && tsc-alias",
+        "test": "jest"
+      }
+    }
+  ],
+  "architecture": {
+    "patterns": [
+      "前后端分离",
+      "事件驱动架构",
+      "插件系统",
+      "Monorepo 工作空间",
+      "TDD 测试驱动开发"
+    ],
+    "communication": [
+      "HTTP REST API",
+      "WebSocket 实时通信",
+      "事件总线同步"
+    ],
+    "dataFlow": [
+      "前端 -> HTTP API -> 后端",
+      "前端 <-> WebSocket <-> 后端",
+      "插件 -> 事件总线 -> 系统组件"
+    ]
+  },
+  "coreFeatures": {
+    "pluginSystem": {
+      "type": "Script标签动态加载",
+      "baseClass": "BasePlugin",
+      "loader": "frontend/src/lib/plugin-system/plugin-loader.ts",
+      "api": "frontend/src/lib/plugin-system/plugin-api.ts"
+    },
+    "eventSystem": {
+      "type": "发布订阅 + 中间件",
+      "frontend": "frontend/src/lib/events/event-bus.ts",
+      "backend": "backend/src/events/event-bus.ts",
+      "sync": "HTTP API + WebSocket"
+    },
+    "chatPlugin": {
+      "path": "frontend/src/plugins/chat-plugin/",
+      "features": ["频道管理", "实时消息", "用户交互"],
+      "dataModels": ["Channel", "Message"]
+    }
+  },
+  "configuration": {
+    "frontend": {
+      "vite": "frontend/vite.config.ts",
+      "tauri": "frontend/src-tauri/tauri.conf.json",
+      "vitest": "frontend/vitest.config.ts",
+      "tailwind": "frontend/tailwind.config.ts"
+    },
+    "backend": {
+      "jest": "backend/jest.config.js",
+      "prisma": "backend/prisma/schema.prisma",
+      "tsconfig": "backend/tsconfig.json"
+    },
+    "shared": {
+      "eslint": ".eslintrc.js",
+      "prettier": ".prettierrc.js",
+      "editorconfig": ".editorconfig"
+    }
+  },
+  "testing": {
+    "strategy": "TDD (测试驱动开发)",
+    "levels": ["unit", "integration", "e2e"],
+    "tools": {
+      "frontend": ["Vitest", "@testing-library/react", "Playwright"],
+      "backend": ["Jest", "Supertest", "TestContainers"],
+      "shared": ["Jest", "ts-jest"]
+    },
+    "coverage": {
+      "frontend": "V8 provider",
+      "backend": "Jest coverage",
+      "threshold": "70%"
+    }
+  },
+  "development": {
+    "scripts": {
+      "dev": "./scripts/dev.sh",
+      "test": "./scripts/test.sh",
+      "build": "./scripts/build.sh",
+      "setup": "./scripts/dev-setup.sh"
+    },
+    "ports": {
+      "frontend": 1420,
+      "backend": 3001
+    },
+    "database": "SQLite (development), PostgreSQL (production optional)"
+  },
+  "scanCoverage": {
+    "totalFiles": 150,
+    "scannedFiles": 145,
+    "coveragePercent": 96,
+    "gaps": [
+      "一些测试文件的实现细节",
+      "部分插件示例代码"
+    ],
+    "ignoredPatterns": [
+      "node_modules/**",
+      ".git/**",
+      "dist/**",
+      "build/**",
+      "coverage/**",
+      "src-tauri/target/**",
+      "*.lock",
+      "*.log"
+    ]
+  },
+  "nextSteps": [
+    "补充完成聊天插件的完整实现",
+    "添加更多插件示例",
+    "完善E2E测试覆盖",
+    "优化构建和部署流程"
+  ]
+}

@@ -1,9 +1,13 @@
 import { MainLayout } from '@/components/layout/main-layout';
 import { Button } from '@/components/ui/button';
 import { useAppStore } from '@/lib/stores/app-store';
+import { usePluginInitialization } from '@/lib/hooks/use-plugin-initialization';
 
 function App() {
   const { theme, setTheme, loadedPlugins } = useAppStore();
+
+  // 在应用启动时初始化插件系统
+  usePluginInitialization();
 
   const toggleTheme = () => {
     setTheme(theme === 'light' ? 'dark' : 'light');
