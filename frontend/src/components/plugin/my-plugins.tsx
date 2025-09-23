@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { useAppStore } from '@/lib/stores/app-store';
 import { cn } from '@/lib/utils';
+import { defaultPluginSystem } from '@/lib/plugin-system';
 import type { PluginInfo, PluginStatus } from '@lifebox/shared';
 
 interface MyPluginsProps {
@@ -124,13 +125,32 @@ function PluginCard({ plugin, onToggle, onUninstall, onConfigure }: PluginCardPr
 }
 
 export function MyPlugins({ className }: MyPluginsProps) {
-  const { loadedPlugins } = useAppStore();
   const [filter, setFilter] = useState<'all' | 'active' | 'inactive' | 'error'>('all');
+  const [installedPlugins, setInstalledPlugins] = useState<PluginInfo[]>([]);
+  const [refreshing, setRefreshing] = useState(false);
 
-  // 获取实际的已安装插件数据
-  const installedPlugins = Object.values(loadedPlugins);
+  // 加载已安装的插件数据
+  const loadInstalledPlugins = async () => {
+    try {
+      setRefreshing(true);
+      // 确保插件系统已初始化
+      await defaultPluginSystem.initialize();
+      // 获取已安装的插件
+      const plugins = defaultPluginSystem.getInstalledPlugins();
+      setInstalledPlugins(plugins);
+    } catch (error) {
+      console.error('Failed to load installed plugins:', error);
+    } finally {
+      setRefreshing(false);
+    }
+  };
 
-  const allPlugins = installedPlugins.length > 0 ? installedPlugins : [];
+  // 组件挂载时加载插件数据
+  useEffect(() => {
+    loadInstalledPlugins();
+  }, []);
+
+  const allPlugins = installedPlugins;
 
   const filteredPlugins = allPlugins.filter(plugin => {
     switch (filter) {
@@ -148,24 +168,79 @@ export function MyPlugins({ className }: MyPluginsProps) {
   const handleTogglePlugin = async (pluginId: string, enable: boolean) => {
     try {
       console.log(`${enable ? '启用' : '禁用'}插件:`, pluginId);
-      // TODO: 调用插件管理器的启用/禁用方法
+      setRefreshing(true);
+
+      let success: boolean;
+      if (enable) {
+        success = await defaultPluginSystem.enablePlugin(pluginId);
+      } else {
+        success = await defaultPluginSystem.disablePlugin(pluginId);
+      }
+
+      if (success) {
+        // 重新加载插件列表以反映状态变化
+        await loadInstalledPlugins();
+      } else {
+        console.error(`Failed to ${enable ? 'enable' : 'disable'} plugin ${pluginId}`);
+      }
     } catch (error) {
       console.error('切换插件状态失败:', error);
+    } finally {
+      setRefreshing(false);
     }
   };
 
   const handleUninstallPlugin = async (pluginId: string) => {
     try {
+      if (!confirm(`确定要卸载插件 "${pluginId}" 吗？`)) {
+        return;
+      }
+
       console.log('卸载插件:', pluginId);
-      // TODO: 调用插件管理器的卸载方法
+      setRefreshing(true);
+
+      const success = await defaultPluginSystem.uninstallPlugin(pluginId);
+
+      if (success) {
+        // 重新加载插件列表
+        await loadInstalledPlugins();
+      } else {
+        console.error(`Failed to uninstall plugin ${pluginId}`);
+      }
     } catch (error) {
       console.error('卸载插件失败:', error);
+    } finally {
+      setRefreshing(false);
     }
   };
 
   const handleConfigurePlugin = (pluginId: string) => {
     console.log('配置插件:', pluginId);
     // TODO: 打开插件配置界面
+  };
+
+  const handleLoadDevPlugin = async () => {
+    try {
+      setRefreshing(true);
+      console.log('🔄 加载开发版聊天插件...');
+
+      // 加载开发版插件
+      const pluginInfo = await defaultPluginSystem.installPlugin('/plugins');
+
+      console.log('✅ 开发版插件加载成功:', pluginInfo);
+
+      // 启用插件
+      await defaultPluginSystem.enablePlugin(pluginInfo.manifest.id);
+
+      // 重新加载插件列表
+      await loadInstalledPlugins();
+
+    } catch (error) {
+      console.error('❌ 加载开发版插件失败:', error);
+      alert('加载开发版插件失败: ' + (error as Error).message);
+    } finally {
+      setRefreshing(false);
+    }
   };
 
   const pluginCounts = {
@@ -179,8 +254,19 @@ export function MyPlugins({ className }: MyPluginsProps) {
     <div className={cn("space-y-4", className)}>
       <div className="flex items-center justify-between">
         <h2 className="text-lg font-semibold">我的插件</h2>
-        <div className="text-sm text-muted-foreground">
-          共 {pluginCounts.all} 个插件
+        <div className="flex items-center gap-3">
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={handleLoadDevPlugin}
+            disabled={refreshing}
+            className="text-xs"
+          >
+            {refreshing ? '加载中...' : '🚀 加载开发版插件'}
+          </Button>
+          <div className="text-sm text-muted-foreground">
+            共 {pluginCounts.all} 个插件
+          </div>
         </div>
       </div>
 

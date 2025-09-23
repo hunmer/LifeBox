@@ -34,40 +34,45 @@ export function usePluginInitialization() {
     setIsRefreshingSource
   } = useAppStore();
 
-  // 防止 React StrictMode 重复执行的 ref
+  // 防止重复执行和无限循环的 ref
   const hasInitialized = useRef(false);
+  const isInitializing = useRef(false);
 
-  // 初始化官方插件源
+  // 初始化官方插件源 - 只在组件挂载时执行一次
   useEffect(() => {
+    if (hasInitialized.current || isInitializing.current) {
+      return;
+    }
+
     const initializeOfficialSource = async () => {
-      // 防止 React StrictMode 重复执行
-      if (hasInitialized.current) {
-        console.log('[PluginInit] Already initialized, skipping...');
-        return;
-      }
+      isInitializing.current = true;
 
-      console.log('[PluginInit] Starting initialization, current sources:', pluginSources.map(s => ({ id: s.id, type: s.type })));
+      try {
+        console.log('[PluginInit] Starting initialization...');
 
-      // 检查是否已存在指定ID的官方插件源
-      const existingOfficialSource = pluginSources.find(
-        source => source.id === OFFICIAL_SOURCE_ID
-      );
+        // 检查是否已存在官方插件源
+        const existingOfficialSource = pluginSources.find(
+          source => source.id === OFFICIAL_SOURCE_ID
+        );
 
-      console.log('[PluginInit] Existing official source:', existingOfficialSource?.id);
+        if (existingOfficialSource) {
+          console.log('[PluginInit] Official source already exists');
+          hasInitialized.current = true;
+          return;
+        }
 
-      if (!existingOfficialSource) {
-        // 清理可能存在的其他官方源（防止重复）
+        // 清理可能存在的其他官方源
         const otherOfficialSources = pluginSources.filter(
           source => source.type === 'official' && source.id !== OFFICIAL_SOURCE_ID
         );
 
-        console.log('[PluginInit] Found other official sources to remove:', otherOfficialSources.map(s => s.id));
+        if (otherOfficialSources.length > 0) {
+          console.log('[PluginInit] Removing duplicate official sources:', otherOfficialSources.map(s => s.id));
+          otherOfficialSources.forEach(source => {
+            removePluginSource(source.id);
+          });
+        }
 
-        // 如果存在其他官方源，先移除它们
-        otherOfficialSources.forEach(source => {
-          console.warn(`[PluginInit] Removing duplicate official source: ${source.id}`);
-          removePluginSource(source.id);
-        });
         // 添加官方插件源
         const officialSource: PluginSource = {
           ...OFFICIAL_PLUGIN_SOURCE,
@@ -84,52 +89,54 @@ export function usePluginInitialization() {
           setSelectedSourceId(OFFICIAL_SOURCE_ID);
         }
 
-        // 标记初始化完成
         hasInitialized.current = true;
-      } else {
-        console.log('[PluginInit] Official source already exists, skipping initialization');
-        hasInitialized.current = true;
+      } catch (error) {
+        console.error('[PluginInit] Failed to initialize:', error);
+      } finally {
+        isInitializing.current = false;
       }
     };
 
     initializeOfficialSource();
-  }, [pluginSources, addPluginSource, removePluginSource, selectedSourceId, setSelectedSourceId]);
+  }, []); // 移除依赖，只在挂载时执行一次
 
-  // 加载官方插件源的数据
+  // 加载官方插件源的数据 - 在初始化完成后执行
   useEffect(() => {
     const loadOfficialPlugins = async () => {
+      if (!hasInitialized.current || isRefreshingSource) {
+        return;
+      }
+
+      const hasOfficialSource = pluginSources.some(s => s.id === OFFICIAL_SOURCE_ID);
+      if (!hasOfficialSource) {
+        return;
+      }
+
       try {
+        console.log('[PluginInit] Loading official plugins...');
         setIsRefreshingSource(true);
 
         const staticPluginService = StaticPluginService.getInstance();
         const plugins = await staticPluginService.getPlugins();
 
-        // 将插件数据设置到store中
         setSourcePlugins(OFFICIAL_SOURCE_ID, plugins);
-
-        // 更新插件源的插件数量
-        const officialSource = pluginSources.find(s => s.id === OFFICIAL_SOURCE_ID);
-        if (officialSource) {
-          // 这里可以添加更新插件数量的逻辑
-          // updatePluginSource(OFFICIAL_SOURCE_ID, { pluginCount: plugins.length });
-        }
+        console.log('[PluginInit] Loaded', plugins.length, 'plugins');
 
       } catch (error) {
-        console.error('Failed to load official plugins:', error);
+        console.error('[PluginInit] Failed to load official plugins:', error);
       } finally {
         setIsRefreshingSource(false);
       }
     };
 
-    // 只有当官方插件源存在时才加载数据
-    const hasOfficialSource = pluginSources.some(s => s.id === OFFICIAL_SOURCE_ID);
-    if (hasOfficialSource && !isRefreshingSource) {
+    // 延迟执行，确保初始化已完成
+    if (hasInitialized.current) {
       loadOfficialPlugins();
     }
-  }, [pluginSources, setSourcePlugins, setIsRefreshingSource, isRefreshingSource]);
+  }, [hasInitialized.current, pluginSources.length]); // 使用更稳定的依赖
 
   return {
-    isInitialized: pluginSources.some(s => s.id === OFFICIAL_SOURCE_ID),
+    isInitialized: hasInitialized.current && pluginSources.some(s => s.id === OFFICIAL_SOURCE_ID),
     isLoading: isRefreshingSource
   };
 }

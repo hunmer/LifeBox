@@ -6,8 +6,8 @@ import { usePluginInitialization } from '@/lib/hooks/use-plugin-initialization';
 function App() {
   const { theme, setTheme, loadedPlugins } = useAppStore();
 
-  // 在应用启动时初始化插件系统
-  usePluginInitialization();
+  // 安全地初始化插件系统
+  const { isInitialized, isLoading } = usePluginInitialization();
 
   const toggleTheme = () => {
     setTheme(theme === 'light' ? 'dark' : 'light');
@@ -42,6 +42,9 @@ function App() {
                 <div className="space-y-2 text-sm">
                   <div>当前主题: <span className="font-mono">{theme}</span></div>
                   <div>已加载插件: <span className="font-mono">{loadedPlugins.length}</span></div>
+                  <div>插件系统: <span className="font-mono">
+                    {isLoading ? '初始化中...' : isInitialized ? '已就绪' : '未初始化'}
+                  </span></div>
                 </div>
               </div>
 

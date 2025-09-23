@@ -49,23 +49,6 @@ export function PluginPanel({ className }: PluginPanelProps) {
 
   return (
     <div className={cn("flex flex-col h-full bg-background", className)}>
-      {/* 标题栏 */}
-      <div className="flex items-center justify-between p-4 border-b">
-        <h1 className="text-lg font-semibold">插件中心</h1>
-
-        <div className="flex items-center gap-2">
-          {hasSelectedSource && (
-            <Button
-              size="sm"
-              variant="outline"
-              onClick={() => handleRefreshSource(selectedSourceId!)}
-            >
-              刷新
-            </Button>
-          )}
-        </div>
-      </div>
-
       {/* 标签页导航 */}
       <div className="flex border-b">
         <button
