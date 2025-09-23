@@ -1,6 +1,7 @@
 import { createApp } from '@/app.js';
 import { initializeDatabase } from '@/database/connection.js';
 import { createWebSocketServer } from '@/websocket/websocket-server.js';
+import { EnhancedWebSocketServer } from '@/websocket/enhanced-websocket-server.js';
 import { EventHandlers } from '@/events/event-handlers.js';
 import { eventBus } from '@/events/event-bus.js';
 
@@ -35,10 +36,26 @@ async function startServer() {
       console.log(`📡 Environment: ${process.env.NODE_ENV || 'development'}`);
     });
 
-    // Start WebSocket server
-    console.log('🔄 Starting WebSocket server...');
-    const wsServer = createWebSocketServer(Number(WS_PORT));
-    console.log(`🔌 WebSocket server running on port ${WS_PORT}`);
+    // Start Enhanced WebSocket server
+    console.log('🔄 Starting Enhanced WebSocket server...');
+    const enhancedWsServer = new EnhancedWebSocketServer(Number(WS_PORT));
+
+    // Register example handlers for demonstration
+    enhancedWsServer.registerHandler({
+      type: 'demo.message',
+      handler: (data, message) => {
+        console.log('Demo message received:', data);
+        enhancedWsServer.broadcast({
+          type: 'demo.response',
+          data: { received: data, timestamp: new Date().toISOString() },
+          timestamp: new Date().toISOString(),
+          id: `demo_${Date.now()}`
+        });
+      },
+      priority: 100
+    });
+
+    console.log(`🔌 Enhanced WebSocket server running on port ${WS_PORT}`);
 
     // Graceful shutdown
     process.on('SIGTERM', () => {
@@ -52,8 +69,8 @@ async function startServer() {
       
       server.close(() => {
         console.log('✅ HTTP server closed');
-        wsServer.close(() => {
-          console.log('✅ WebSocket server closed');
+        enhancedWsServer.close().then(() => {
+          console.log('✅ Enhanced WebSocket server closed');
           process.exit(0);
         });
       });
@@ -70,8 +87,8 @@ async function startServer() {
       
       server.close(() => {
         console.log('✅ HTTP server closed');
-        wsServer.close(() => {
-          console.log('✅ WebSocket server closed');
+        enhancedWsServer.close().then(() => {
+          console.log('✅ Enhanced WebSocket server closed');
           process.exit(0);
         });
       });

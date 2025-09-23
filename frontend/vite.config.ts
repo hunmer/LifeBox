@@ -1,11 +1,21 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import path from "path";
+import { inspectorServer } from "@react-dev-inspector/vite-plugin";
 /// <reference types="vitest" />
 
 // https://vitejs.dev/config/
-export default defineConfig(async () => ({
-  plugins: [react()],
+export default defineConfig(() => ({
+  plugins: [
+    inspectorServer(),
+    react({
+      babel: {
+        plugins: [
+          "@react-dev-inspector/babel-plugin",
+        ],
+      },
+    }),
+  ],
 
   // Vite options tailored for Tauri development
   clearScreen: false,

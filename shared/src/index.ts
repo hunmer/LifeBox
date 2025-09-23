@@ -17,6 +17,15 @@ export * from './types/api';
 // 导出聊天功能类型
 export * from './types/chat';
 
+// 导出WebSocket通信类型
+export * from './types/websocket';
+
+// 导出HTTP路由器类型
+export * from './types/http-router';
+
+// 导出基础服务类型
+export * from './types/base-service';
+
 // 导出常量定义
 export * from './constants/index';
 
@@ -46,3 +55,8 @@ export {
   UserRole,
   ChannelMemberRole,
 } from './types/chat';
+
+export {
+  WebSocketState,
+  WebSocketMessageTypes,
+} from './types/websocket';
