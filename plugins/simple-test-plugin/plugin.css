@@ -1,0 +1,45 @@
+.simple-test-plugin {
+  padding: 20px;
+  border-radius: 8px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  margin: 16px 0;
+}
+
+.simple-test-plugin h3 {
+  margin: 0 0 16px 0;
+  color: var(--foreground);
+}
+
+.simple-test-plugin .button-group {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.simple-test-plugin .info-box {
+  background: var(--muted);
+  padding: 12px;
+  border-radius: 6px;
+  margin: 12px 0;
+  font-family: monospace;
+  font-size: 14px;
+}
+
+.simple-test-plugin .status {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.simple-test-plugin .status.success {
+  background: var(--success-bg, #22c55e);
+  color: white;
+}
+
+.simple-test-plugin .status.error {
+  background: var(--destructive);
+  color: var(--destructive-foreground);
+}

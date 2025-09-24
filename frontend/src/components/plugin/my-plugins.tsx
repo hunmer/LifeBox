@@ -222,8 +222,6 @@ export function MyPlugins({ className }: MyPluginsProps) {
   const handleLoadDevPlugin = async () => {
     try {
       setRefreshing(true);
-      console.log('🔄 加载开发版聊天插件...');
-
       // 加载开发版插件
       const pluginInfo = await defaultPluginSystem.installPlugin('/plugins');
 

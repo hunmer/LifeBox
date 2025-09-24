@@ -5,6 +5,7 @@ import type {
   BasePlugin,
   PluginAPI
 } from '@lifebox/shared';
+import { setupGlobalAPI, getPluginAPI } from './plugin-global-api';
 
 /**
  * PluginLoader 类
@@ -17,6 +18,20 @@ export class PluginLoader {
 
   constructor(pluginAPI?: PluginAPI) {
     this.pluginAPI = pluginAPI || this.createDefaultAPI();
+    // 初始化时设置全局API
+    this.initializeGlobalAPI();
+  }
+
+  /**
+   * 初始化全局API
+   * @private
+   */
+  private initializeGlobalAPI(): void {
+    try {
+      setupGlobalAPI();
+    } catch (error) {
+      console.error('Failed to setup global plugin API:', error);
+    }
   }
 
   /**

@@ -1,0 +1,30 @@
+{
+  "id": "simple-test-plugin",
+  "name": "简单测试插件",
+  "version": "1.0.0",
+  "description": "一个用于测试全局API的简单插件示例",
+  "author": "LifeBox Team",
+  "homepage": "https://lifebox.dev",
+  "repository": "https://github.com/lifebox/simple-test-plugin",
+  "permissions": ["storage", "ui", "events", "http"],
+  "entry": "plugin.js",
+  "styles": "plugin.css",
+  "icon": "🧪",
+  "category": "developer-tools",
+  "tags": ["test", "example", "api", "development"],
+  "minLifeBoxVersion": "1.0.0",
+  "environment": "development",
+  "autoload": true,
+  "dependencies": {},
+  "devDependencies": {},
+  "scripts": {
+    "build": "node build.js",
+    "dev": "node build.js --watch"
+  },
+  "files": [
+    "plugin.js",
+    "plugin.css",
+    "manifest.json",
+    "README.md"
+  ]
+}

@@ -28,7 +28,19 @@ export default defineConfig(() => ({
       // 3. tell vite to ignore watching `src-tauri`
       ignored: ["**/src-tauri/**"],
     },
+    fs: {
+      // Allow serving files from plugins directory
+      allow: [
+        // Default allowed directories
+        path.resolve(__dirname, ".."),
+        // Specifically allow plugins directory
+        path.resolve(__dirname, "../plugins"),
+      ]
+    }
   },
+
+  // Public directory for static assets
+  publicDir: "public",
 
   // Path resolution
   resolve: {

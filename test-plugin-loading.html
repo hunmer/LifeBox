@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>测试插件加载</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .test-result { padding: 10px; margin: 5px 0; border-radius: 4px; }
+        .success { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .error { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .info { background-color: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
+        pre { background: #f8f9fa; padding: 10px; border-radius: 4px; overflow: auto; }
+    </style>
+</head>
+<body>
+    <h1>LifeBox 插件系统测试</h1>
+
+    <div id="test-results"></div>
+
+    <h2>测试日志</h2>
+    <pre id="test-log"></pre>
+
+    <script>
+        const log = (message, type = 'info') => {
+            const logElement = document.getElementById('test-log');
+            const timestamp = new Date().toLocaleTimeString();
+            logElement.textContent += `[${timestamp}] ${message}\n`;
+
+            const resultsElement = document.getElementById('test-results');
+            const resultDiv = document.createElement('div');
+            resultDiv.className = `test-result ${type}`;
+            resultDiv.textContent = message;
+            resultsElement.appendChild(resultDiv);
+        };
+
+        // 测试全局API是否可用
+        function testGlobalAPI() {
+            log('测试全局API...', 'info');
+
+            if (window.LifeBoxAPI) {
+                log('✅ 全局API可用', 'success');
+
+                // 测试API组件
+                const { React, components, utils } = window.LifeBoxAPI;
+
+                if (React) log('✅ React可用', 'success');
+                else log('❌ React不可用', 'error');
+
+                if (components && components.Button) log('✅ Button组件可用', 'success');
+                else log('❌ Button组件不可用', 'error');
+
+                if (utils && utils.cn) log('✅ cn工具函数可用', 'success');
+                else log('❌ cn工具函数不可用', 'error');
+
+                return true;
+            } else {
+                log('❌ 全局API不可用', 'error');
+                return false;
+            }
+        }
+
+        // 测试插件manifest访问
+        async function testPluginManifest() {
+            log('测试插件manifest访问...', 'info');
+
+            try {
+                const response = await fetch('/plugins/simple-test-plugin/manifest.json');
+                if (response.ok) {
+                    const manifest = await response.json();
+                    log(`✅ 插件manifest加载成功: ${manifest.name}`, 'success');
+                    return manifest;
+                } else {
+                    log(`❌ 插件manifest加载失败: ${response.status}`, 'error');
+                    return null;
+                }
+            } catch (error) {
+                log(`❌ 插件manifest访问错误: ${error.message}`, 'error');
+                return null;
+            }
+        }
+
+        // 测试插件脚本加载
+        async function testPluginScript() {
+            log('测试插件脚本加载...', 'info');
+
+            try {
+                const response = await fetch('/plugins/simple-test-plugin/plugin.js');
+                if (response.ok) {
+                    const script = await response.text();
+                    log(`✅ 插件脚本获取成功 (${script.length} 字符)`, 'success');
+                    return script;
+                } else {
+                    log(`❌ 插件脚本加载失败: ${response.status}`, 'error');
+                    return null;
+                }
+            } catch (error) {
+                log(`❌ 插件脚本访问错误: ${error.message}`, 'error');
+                return null;
+            }
+        }
+
+        // 手动加载插件进行测试
+        async function loadTestPlugin() {
+            log('手动加载测试插件...', 'info');
+
+            try {
+                const script = document.createElement('script');
+                script.src = '/plugins/simple-test-plugin/plugin.js';
+                script.onload = () => {
+                    log('✅ 插件脚本加载完成', 'success');
+
+                    // 检查插件是否注册成功
+                    if (window.LifeBoxPlugins && window.LifeBoxPlugins['simple-test-plugin']) {
+                        log('✅ 插件注册成功', 'success');
+
+                        if (window.SimpleTestPlugin) {
+                            log('✅ 插件实例创建成功', 'success');
+                        } else {
+                            log('❌ 插件实例未找到', 'error');
+                        }
+                    } else {
+                        log('❌ 插件未正确注册', 'error');
+                    }
+                };
+                script.onerror = () => {
+                    log('❌ 插件脚本加载失败', 'error');
+                };
+
+                document.head.appendChild(script);
+            } catch (error) {
+                log(`❌ 加载插件时出错: ${error.message}`, 'error');
+            }
+        }
+
+        // 运行所有测试
+        async function runAllTests() {
+            log('开始运行插件系统测试...', 'info');
+
+            // 等待短暂时间让页面初始化
+            await new Promise(resolve => setTimeout(resolve, 1000));
+
+            // 测试全局API
+            const apiAvailable = testGlobalAPI();
+
+            // 测试插件文件访问
+            const manifest = await testPluginManifest();
+            const script = await testPluginScript();
+
+            if (apiAvailable && manifest && script) {
+                log('所有前置条件满足，开始加载插件...', 'info');
+                await loadTestPlugin();
+            } else {
+                log('❌ 前置条件不满足，跳过插件加载', 'error');
+            }
+
+            log('测试完成', 'info');
+        }
+
+        // 页面加载后运行测试
+        window.addEventListener('load', runAllTests);
+
+        // 监听插件加载事件
+        window.addEventListener('lifebox:dev-plugin:loaded', (event) => {
+            log(`📡 收到插件加载事件: ${event.detail.plugin.name}`, 'success');
+        });
+    </script>
+</body>
+</html>
